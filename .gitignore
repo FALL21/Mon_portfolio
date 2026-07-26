@@ -1,0 +1,22 @@
+# dépendances
+/node_modules
+
+# builds
+/.next
+/out
+/build
+next-env.d.ts
+
+# divers
+.DS_Store
+*.pem
+server.log
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env*.local
+.env

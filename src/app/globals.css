@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #071a10;
+  --primary: #22c55e;
+  --accent: #16a34a;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Plus Jakarta Sans", var(--font-sans);
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background-color: var(--bg);
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(34, 197, 94, 0.28);
+  color: #ffffff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #071a10;
+}
+::-webkit-scrollbar-thumb {
+  background: #163a25;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1e5236;
+}
+
+@layer components {
+  /* Panneau vitré */
+  .glass {
+    background: rgba(13, 42, 27, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(34, 197, 94, 0.12);
+  }
+
+  .glass-strong {
+    background: rgba(10, 34, 22, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(34, 197, 94, 0.14);
+  }
+
+  /* Texte en dégradé vert */
+  .text-gradient {
+    background: linear-gradient(120deg, #ffffff 0%, #a7f3c9 45%, #22c55e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.25em] text-primary;
+  }
+
+  .section-pad {
+    @apply px-5 py-24 sm:px-8 md:py-32;
+  }
+
+  .container-x {
+    @apply mx-auto w-full max-w-6xl;
+  }
+}
+
+/* Motif de grille en fond */
+.bg-dotgrid {
+  background-image: radial-gradient(
+    rgba(34, 197, 94, 0.08) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+}
