@@ -13,7 +13,7 @@ import "@fontsource/jetbrains-mono/500.css";
 
 import "./globals.css";
 
-const url = "https://mameboufall.dev";
+const url = "https://mameboufall.com";
 const desc =
   "Ingénieur IA & Big Data et Développeur Full Stack. Je conçois et déploie des solutions d'Intelligence Artificielle, de Computer Vision et des plateformes SaaS de production.";
 

@@ -118,7 +118,7 @@ git push                        # redéploiement automatique
 
 ## Domaine personnalisé
 
-Le projet référence `https://mameboufall.dev` à quelques endroits SEO
+Le projet référence `https://mameboufall.com` à quelques endroits SEO
 (`layout.tsx`, `robots.ts`, `sitemap.ts`). Si vous utilisez un autre domaine,
 remplacez cette URL dans ces trois fichiers. Voir
 [chapitre 07](./07-seo-performance.md).
