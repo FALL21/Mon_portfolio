@@ -41,7 +41,7 @@ Générés dynamiquement par Next.js :
   l'indexation, référence le sitemap).
 - [`src/app/sitemap.ts`](../src/app/sitemap.ts) → `/sitemap.xml`.
 
-Les deux utilisent l'URL `https://mameboufall.dev`. **Remplacez-la par votre
+Les deux utilisent l'URL `https://mameboufall.com`. **Remplacez-la par votre
 domaine** dans ces fichiers (et dans `layout.tsx`).
 
 ---

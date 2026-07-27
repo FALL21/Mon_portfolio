@@ -75,6 +75,18 @@ body {
     border: 1px solid rgba(34, 197, 94, 0.14);
   }
 
+  /* blur moins coûteux sur mobile */
+  @media (max-width: 768px) {
+    .glass {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .glass-strong {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+  }
+
   /* Texte en dégradé vert */
   .text-gradient {
     background: linear-gradient(120deg, #ffffff 0%, #a7f3c9 45%, #22c55e 100%);

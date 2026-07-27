@@ -23,8 +23,9 @@ export default function About() {
                   alt={profile.name}
                   width={640}
                   height={640}
+                  sizes="(max-width: 768px) 280px, 300px"
                   className="rounded-2xl object-cover"
-                  priority
+                  loading="lazy"
                 />
                 <div className="pointer-events-none absolute inset-2 rounded-2xl ring-1 ring-inset ring-white/10" />
               </div>

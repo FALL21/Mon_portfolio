@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Download, MapPin, Sparkles } from "lucide-react";
 import { profile } from "@/data/portfolio";
-import NeuralMesh from "./NeuralMesh";
+
+const NeuralMesh = dynamic(() => import("./NeuralMesh"), { ssr: false });
 
 export default function Hero() {
   const [i, setI] = useState(0);
@@ -16,7 +18,7 @@ export default function Hero() {
 
   return (
     <section id="top" className="relative min-h-[100svh] overflow-hidden">
-      {/* Fond : grille + halo + maillage neuronal */}
+      {/* Fond : grille + halo + maillage neuronal (chargé après hydratation) */}
       <div className="bg-dotgrid absolute inset-0" />
       <div className="absolute inset-0">
         <NeuralMesh />
@@ -28,7 +30,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.45 }}
           className="glass mb-6 inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-xs text-muted"
         >
           <span className="relative flex h-2 w-2">
@@ -41,7 +43,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.05 }}
+          transition={{ duration: 0.45, delay: 0.04 }}
           className="font-mono text-sm text-primary"
         >
           Bonjour, je suis
@@ -50,7 +52,7 @@ export default function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.45, delay: 0.08 }}
           className="mt-2 font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-7xl"
         >
           {profile.name}
@@ -64,7 +66,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -14 }}
-              transition={{ duration: 0.35 }}
+              transition={{ duration: 0.3 }}
               className="font-display text-2xl font-bold text-gradient sm:text-4xl"
             >
               {profile.roles[i]}
@@ -75,7 +77,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.45, delay: 0.14 }}
           className="mt-7 max-w-2xl text-base leading-relaxed text-muted sm:text-lg"
         >
           {profile.pitch}
@@ -84,7 +86,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.45, delay: 0.2 }}
           className="mt-9 flex flex-wrap items-center gap-3"
         >
           <a
@@ -112,7 +114,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
+          transition={{ duration: 0.45, delay: 0.28 }}
           className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted"
         >
           <span className="inline-flex items-center gap-1.5">

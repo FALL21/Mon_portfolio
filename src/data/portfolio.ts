@@ -24,8 +24,8 @@ export const profile = {
   title: "Ingénieur IA & Big Data",
   subtitle: "Constructeur de solutions IA en production",
   roles: [
-    "Développeur Full Stack",
     "Ingénieur IA & Big Data",
+    "Développeur Full Stack",
     "Data / AI Engineer",
     "Computer Vision Engineer",
     "Formateur",
