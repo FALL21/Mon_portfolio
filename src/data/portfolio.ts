@@ -68,10 +68,10 @@ export type TimelineItem = {
 export const timeline: TimelineItem[] = [
   { year: "2016 – 2020", title: "Licence en Mathématiques", org: "Université Cheikh Anta Diop (UCAD)", icon: GraduationCap },
   { year: "2021", title: "Chargé de cours · Data & Full Stack", org: "GoMyCode Dakar", icon: GraduationCap },
-  { year: "2022 – 2024", title: "Ingénieur DevOps", org: "GRE Dakar", icon: Workflow },
   { year: "2024 – 2026", title: "Master IA & Big Data", org: "École Supérieure Polytechnique de Dakar", icon: BrainCircuit },
   { year: "2025", title: "Fondateur · SIGAC / VBS Digital", org: "Entreprise personnelle", icon: Building2 },
   { year: "2025 – 2026", title: "Full Stack Engineer · IA & Data", org: "Trésor Public de Dakar", icon: ScanFace },
+  { year: "2025 – 2026", title: "Ingénieur DATAOPS / AIOPS", org: "CDSLABS · France (Freelance)", icon: Workflow },
 ];
 
 export type SkillGroup = { name: string; items: string[] };
