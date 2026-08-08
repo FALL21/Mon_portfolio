@@ -1,4 +1,4 @@
-import { Mail, Linkedin, Phone } from "lucide-react";
+import { Mail, Linkedin, Phone, Github } from "lucide-react";
 import { profile } from "@/data/portfolio";
 
 export default function Footer() {
@@ -26,6 +26,15 @@ export default function Footer() {
               className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-muted transition hover:bg-primary hover:text-base"
             >
               <Linkedin size={17} />
+            </a>
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-muted transition hover:bg-primary hover:text-base"
+            >
+              <Github size={17} />
             </a>
             <a
               href={`tel:${profile.phone.replace(/\s/g, "")}`}

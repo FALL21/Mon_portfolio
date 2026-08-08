@@ -38,6 +38,8 @@ export const profile = {
   phone: "+221 77 795 49 21",
   linkedin: "https://www.linkedin.com/in/mameboufall",
   linkedinHandle: "@mameboufall",
+  github: "https://github.com/FALL21",
+  githubHandle: "@FALL21",
   cvPath: "/CV_Mame_Bou_FALL.pdf",
   photo: "/profile.jpg",
 };

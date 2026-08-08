@@ -1,14 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Phone, Linkedin, Download, ArrowRight } from "lucide-react";
+import { Mail, Phone, Linkedin, Github, Download, ArrowRight } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import Reveal from "./Reveal";
 
 const items = [
-  { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}` },
-  { icon: Phone, label: "Téléphone", value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}` },
-  { icon: Linkedin, label: "LinkedIn", value: profile.linkedinHandle, href: profile.linkedin },
+  { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}`, external: false },
+  { icon: Phone, label: "Téléphone", value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, external: false },
+  { icon: Linkedin, label: "LinkedIn", value: profile.linkedinHandle, href: profile.linkedin, external: true },
+  { icon: Github, label: "GitHub", value: profile.githubHandle, href: profile.github, external: true },
 ];
 
 export default function Contact() {
@@ -31,15 +32,15 @@ export default function Contact() {
                 réponds rapidement.
               </p>
 
-              <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
+              <div className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {items.map((it) => {
                   const Icon = it.icon;
                   return (
                     <motion.a
                       key={it.label}
                       href={it.href}
-                      target={it.label === "LinkedIn" ? "_blank" : undefined}
-                      rel="noopener noreferrer"
+                      target={it.external ? "_blank" : undefined}
+                      rel={it.external ? "noopener noreferrer" : undefined}
                       whileHover={{ y: -4 }}
                       className="glass flex flex-col items-center gap-2 rounded-2xl p-5 transition hover:border-primary/30"
                     >

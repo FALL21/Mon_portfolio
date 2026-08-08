@@ -62,7 +62,7 @@ export default function RootLayout({
     jobTitle: profile.title,
     email: `mailto:${profile.email}`,
     address: { "@type": "PostalAddress", addressLocality: "Dakar", addressCountry: "SN" },
-    sameAs: [profile.linkedin],
+    sameAs: [profile.linkedin, profile.github],
     description: desc,
   };
 
