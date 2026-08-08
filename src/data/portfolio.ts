@@ -145,7 +145,7 @@ export const projects: Project[] = [
     name: "SIGAC",
     tagline: "Gestion administrative intelligente du capital humain",
     description:
-      "SaaS de gestion du personnel avec pointage par reconnaissance faciale et géolocalisation, dérivé de l'expérience Trésor Public et adapté aux PME et établissements scolaires.",
+      "SaaS de gestion du personnel avec pointage par reconnaissance faciale et géolocalisation, adapté aux PME et établissements scolaires.",
     highlights: [
       "Pointage intelligent + géolocalisation intégrés",
       "Analytics RH et tableaux de bord décisionnels",
