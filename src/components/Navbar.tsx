@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Download, Menu, X } from "lucide-react";
 import { profile } from "@/data/portfolio";
 
@@ -36,11 +37,18 @@ export default function Navbar() {
         }`}
       >
         <a href="#top" className="group flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 font-display text-sm font-extrabold text-primary ring-1 ring-primary/30">
-            MB
+          <span className="relative h-9 w-9 overflow-hidden rounded-xl ring-1 ring-primary/40">
+            <Image
+              src={profile.photo}
+              alt={profile.name}
+              width={72}
+              height={72}
+              className="h-full w-full object-cover"
+              priority
+            />
           </span>
           <span className="hidden font-display text-sm font-semibold tracking-tight text-white sm:block">
-            Mame Bou FALL
+            {profile.name}
           </span>
         </a>
 
