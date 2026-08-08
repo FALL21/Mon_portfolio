@@ -75,15 +75,24 @@ body {
     border: 1px solid rgba(34, 197, 94, 0.14);
   }
 
-  /* blur moins coûteux sur mobile */
+  /* Mobile : pas de backdrop-filter (tres couteux sur GPU mobile) */
   @media (max-width: 768px) {
     .glass {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(10, 34, 22, 0.92);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
     .glass-strong {
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(8, 28, 18, 0.96);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* Coupe les gros flous CSS sur petits ecrans */
+  @media (max-width: 768px) {
+    .hero-glow {
+      display: none !important;
     }
   }
 
@@ -101,6 +110,8 @@ body {
 
   .section-pad {
     @apply px-5 py-24 sm:px-8 md:py-32;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
   }
 
   .container-x {
@@ -115,4 +126,11 @@ body {
     transparent 1px
   );
   background-size: 26px 26px;
+}
+
+@media (max-width: 768px) {
+  .bg-dotgrid {
+    background-size: 32px 32px;
+    opacity: 0.7;
+  }
 }

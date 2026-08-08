@@ -2,7 +2,8 @@
 
 Bienvenue dans la documentation technique du portfolio. Elle couvre l'installation,
 l'architecture, la personnalisation du contenu, le système de design, la référence
-des composants, le déploiement, le SEO/performance et le dépannage.
+des composants, le déploiement (dont le guide Hetzner en production), le
+SEO/performance et le dépannage.
 
 > Public visé : la personne qui installe, personnalise, déploie ou fait évoluer ce
 > portfolio. Aucune connaissance préalable de Next.js n'est requise pour la
@@ -17,9 +18,10 @@ des composants, le déploiement, le SEO/performance et le dépannage.
 | 03 | [Personnalisation du contenu](./03-personnalisation.md) | Éditer `portfolio.ts`, changer la photo, le CV, les projets. |
 | 04 | [Système de design](./04-design-system.md) | Couleurs, typographie, tokens, glassmorphism, la signature *NeuralMesh*. |
 | 05 | [Référence des composants](./05-composants.md) | Rôle et props de chaque composant `src/components`. |
-| 06 | [Déploiement](./06-deploiement.md) | Hetzner + Nginx + Docker, DNS Namecheap, Vercel preview. |
+| 06 | [Déploiement](./06-deploiement.md) | Vue d'ensemble : Hetzner, Docker local, Vercel preview. |
 | 07 | [SEO & performance](./07-seo-performance.md) | Metadata, Open Graph, JSON-LD, sitemap, optimisations. |
 | 08 | [Dépannage & FAQ](./08-depannage.md) | Problèmes fréquents et solutions. |
+| 09 | [Déploiement Hetzner](./09-deploiement-hetzner.md) | Guide complet prod VPS : Nginx FTF, DNS, SSL, rollback. |
 
 ## Démarrage express
 

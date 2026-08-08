@@ -79,9 +79,10 @@ Une documentation technique complète est disponible dans le dossier
 | 03 | [Personnalisation du contenu](./docs/03-personnalisation.md) | Éditer le texte, la photo, le CV, les projets. |
 | 04 | [Système de design](./docs/04-design-system.md) | Couleurs, polices, animations. |
 | 05 | [Référence des composants](./docs/05-composants.md) | Chaque composant expliqué. |
-| 06 | [Déploiement](./docs/06-deploiement.md) | Hetzner + Nginx + Docker, DNS, Vercel preview. |
+| 06 | [Déploiement](./docs/06-deploiement.md) | Vue d'ensemble Hetzner / Docker / Vercel. |
 | 07 | [SEO & performance](./docs/07-seo-performance.md) | Metadata, sitemap, optimisations. |
 | 08 | [Dépannage & FAQ](./docs/08-depannage.md) | Problèmes fréquents et solutions. |
+| 09 | [Déploiement Hetzner](./docs/09-deploiement-hetzner.md) | Guide complet prod VPS (Nginx, DNS, SSL). |
 
 ---
 

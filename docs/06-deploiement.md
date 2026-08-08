@@ -6,9 +6,11 @@
 
 Guide complet pour mettre le portfolio en production.
 
-**Production actuelle :** VPS **Hetzner** (`46.224.76.38`) + **Nginx** + Docker,
-domaine **`mameboufall.com`**, en coexistence avec l'app **FTF (Fall Trading
-Farmer)** déjà présente sur le même serveur.
+**Production actuelle :** VPS **Hetzner** (`46.224.76.38`) + **Nginx** (conteneur
+FTF) + Docker, domaine **`mameboufall.com`**.
+
+> Guide opérationnel détaillé (architecture, DNS, SSL, rollback, dépannage) :
+> **[09 · Déploiement Hetzner](./09-deploiement-hetzner.md)**.
 
 | Méthode | Quand l'utiliser | Difficulté |
 | ------- | ---------------- | ---------- |
@@ -33,6 +35,11 @@ Voir [chapitre 07](./07-seo-performance.md).
 ---
 
 ## A. Hetzner VPS + Nginx + Docker (recommandé)
+
+**Documentation complète :** [09 · Déploiement Hetzner](./09-deploiement-hetzner.md)
+(architecture, pas-à-pas, SSL, DNS, rollback, dépannage).
+
+Résumé rapide ci-dessous.
 
 ### Architecture
 
@@ -136,13 +143,13 @@ Dans **Vercel → Domains** : retirer `mameboufall.com` et `www`.
 
 ### A.5. SSL après propagation DNS
 
+Voir le détail dans [09 §4.6](./09-deploiement-hetzner.md#46-certificat-ssl-lets-encrypt) :
+
 ```bash
 dig +short A mameboufall.com @8.8.8.8   # → 46.224.76.38
-sudo bash /opt/portfolio/deploy/hetzner/issue-ssl.sh
+bash /opt/portfolio/deploy/hetzner/issue-ssl.sh
+docker exec ftf-frontend-prod nginx -t && docker exec ftf-frontend-prod nginx -s reload
 ```
-
-Puis activer le bloc HTTPS commenté dans `nginx.conf` et recharger Nginx.
-Faire aussi rediriger le `location /` HTTP vers HTTPS (comme FTF).
 
 ### A.6. Vérification
 
@@ -221,9 +228,11 @@ Utile pour une URL de preview `*.vercel.app` sans toucher au DNS de
 | Bind port prod | `PORTFOLIO_PUBLISH` / `deploy/hetzner/.env.example` |
 | Vhost Nginx | `deploy/hetzner/nginx-mameboufall.conf` |
 | Script install | `deploy/hetzner/setup-portfolio.sh` |
+| Guide Hetzner complet | `docs/09-deploiement-hetzner.md` |
 | Dépôt distant | `https://github.com/FALL21/Mon_portfolio.git` |
 
 ---
 
 [Chapitre précédent → Composants](./05-composants.md) ·
-[Chapitre suivant → SEO & performance](./07-seo-performance.md)
+[Chapitre suivant → SEO & performance](./07-seo-performance.md) ·
+[Guide Hetzner détaillé →](./09-deploiement-hetzner.md)

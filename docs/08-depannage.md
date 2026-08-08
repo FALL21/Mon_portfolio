@@ -146,7 +146,8 @@ Vercel → Domains, et pointez les A records Namecheap vers `46.224.76.38`.
 | Régler le SEO / domaine | `src/app/layout.tsx`, `robots.ts`, `sitemap.ts` |
 | Ajuster le fond animé | `src/components/NeuralMesh.tsx` |
 | Config Docker | `Dockerfile`, `docker-compose.yml` |
-| Déploiement Hetzner / DNS | `docs/06-deploiement.md`, `deploy/hetzner/` |
+| Déploiement Hetzner / DNS / SSL | `docs/09-deploiement-hetzner.md` |
+| Déploiement (vue d'ensemble) | `docs/06-deploiement.md` |
 
 ---
 
