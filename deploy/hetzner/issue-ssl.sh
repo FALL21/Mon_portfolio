@@ -13,7 +13,7 @@ docker run --rm \
   certbot/certbot certonly --webroot \
   -w /var/www/certbot \
   -d mameboufall.com -d www.mameboufall.com \
-  --email "${EMAIL}" --agree-tos --non-interactive --keep-until-expiry
+  --email "${EMAIL}" --agree-tos --non-interactive --expand
 
 echo "==> Vérifier que les certificats existent :"
 ls -la "${DOMAIN_ROOT}/conf/live/mameboufall.com/"
