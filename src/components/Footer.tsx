@@ -10,6 +10,10 @@ export default function Footer() {
             « La technologie prend tout son sens lorsqu&apos;elle résout des problèmes réels. »
           </p>
 
+          <p className="text-sm font-medium tracking-[0.2em] text-white/70">
+            XAM - JEUF - JARIÑU
+          </p>
+
           <div className="flex gap-3">
             <a
               href={`mailto:${profile.email}`}
@@ -48,7 +52,7 @@ export default function Footer() {
           <div className="mt-2 h-px w-full max-w-xs bg-white/5" />
 
           <p className="text-xs text-muted">
-            © {new Date().getFullYear()} {profile.name}. Conçu & développé avec Next.js.
+            © {new Date().getFullYear()} {profile.name}. Tous droits réservés.
           </p>
         </div>
       </div>
