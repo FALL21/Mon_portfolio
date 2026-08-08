@@ -79,7 +79,7 @@ Une documentation technique complète est disponible dans le dossier
 | 03 | [Personnalisation du contenu](./docs/03-personnalisation.md) | Éditer le texte, la photo, le CV, les projets. |
 | 04 | [Système de design](./docs/04-design-system.md) | Couleurs, polices, animations. |
 | 05 | [Référence des composants](./docs/05-composants.md) | Chaque composant expliqué. |
-| 06 | [Déploiement](./docs/06-deploiement.md) | Vercel + domaine, DNS, Docker, VPS. |
+| 06 | [Déploiement](./docs/06-deploiement.md) | Hetzner + Nginx + Docker, DNS, Vercel preview. |
 | 07 | [SEO & performance](./docs/07-seo-performance.md) | Metadata, sitemap, optimisations. |
 | 08 | [Dépannage & FAQ](./docs/08-depannage.md) | Problèmes fréquents et solutions. |
 
@@ -90,7 +90,8 @@ Une documentation technique complète est disponible dans le dossier
 ```
 portfolio-mamebou-fall/
 ├── Dockerfile              # build multi-stage, image légère non-root
-├── docker-compose.yml      # orchestration + healthcheck
+├── docker-compose.yml      # orchestration + healthcheck (PORTFOLIO_PUBLISH)
+├── deploy/hetzner/         # Nginx vhost + scripts install VPS
 ├── next.config.mjs         # output: "standalone" (Docker)
 ├── tailwind.config.ts      # thème & couleurs
 ├── public/

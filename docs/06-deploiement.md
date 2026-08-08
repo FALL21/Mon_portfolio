@@ -4,15 +4,17 @@
 
 ---
 
-Guide complet pour mettre le portfolio en production. Trois options sont
-documentées ; **Vercel + domaine `mameboufall.com`** est la voie utilisée en
-production actuelle.
+Guide complet pour mettre le portfolio en production.
+
+**Production actuelle :** VPS **Hetzner** (`46.224.76.38`) + **Nginx** + Docker,
+domaine **`mameboufall.com`**, en coexistence avec l'app **FTF (Fall Trading
+Farmer)** déjà présente sur le même serveur.
 
 | Méthode | Quand l'utiliser | Difficulté |
 | ------- | ---------------- | ---------- |
-| **[A. Vercel](#a-déploiement-vercel--recommandé)** | Production rapide, HTTPS, CDN, Git | Facile |
+| **[A. Hetzner VPS](#a-hetzner-vps--nginx--docker--recommandé)** | Production `mameboufall.com` | Moyenne |
 | **[B. Docker local / Compose](#b-docker-local--compose)** | Test production en local | Facile |
-| **[C. VPS + Docker](#c-vps--docker--reverse-proxy)** | Contrôle total du serveur | Moyenne |
+| **[C. Vercel](#c-vercel-secours--preview)** | Preview / secours `*.vercel.app` | Facile |
 
 ---
 
@@ -20,175 +22,168 @@ production actuelle.
 
 - Compte **GitHub** avec le dépôt :
   [`FALL21/Mon_portfolio`](https://github.com/FALL21/Mon_portfolio)
-- Domaine **`mameboufall.com`** (registrar : Namecheap ou équivalent)
+- Domaine **`mameboufall.com`** (registrar : Namecheap)
 - URLs SEO déjà alignées dans le code :
   - `src/app/layout.tsx` → `metadataBase`
   - `src/app/robots.ts`
   - `src/app/sitemap.ts`
 
-Si vous changez de domaine, mettez à jour ces trois fichiers puis committez /
-poussez. Voir [chapitre 07](./07-seo-performance.md).
+Voir [chapitre 07](./07-seo-performance.md).
 
 ---
 
-## A. Déploiement Vercel (recommandé)
+## A. Hetzner VPS + Nginx + Docker (recommandé)
 
-Next.js est édité par Vercel. Sur cette plateforme, `output: "standalone"`
-(dans `next.config.mjs`) est **ignoré** : Vercel gère l'empaquetage lui-même.
-Rien à changer dans le Dockerfile pour cette méthode.
+### Architecture
 
-### A.1. Connecter le dépôt GitHub
-
-1. Allez sur [vercel.com](https://vercel.com) et connectez-vous.
-2. **Add New… → Project**.
-3. Importez **`FALL21/Mon_portfolio`** (branche `main`).
-4. Réglages attendus :
-
-   | Champ | Valeur |
-   | ----- | ------ |
-   | Framework Preset | **Next.js** (détecté automatiquement) |
-   | Root Directory | `./` |
-   | Build Command | `next build` (défaut) |
-   | Output Directory | (laisser le défaut Next.js) |
-   | Install Command | `npm install` (défaut) |
-
-5. Variables d'environnement : **aucune n'est requise** pour ce portfolio.
-6. Cliquez sur **Deploy**.
-
-À la fin du build, Vercel fournit une URL temporaire du type :
-
-```text
-https://mon-portfolio-xxxx.vercel.app
+```
+Internet
+   │
+   ▼
+Nginx :80 / :443          ← déjà en place (sert aussi FTF)
+   │
+   ├─ Host: (domaine FTF)     → app existante (inchangée)
+   └─ Host: mameboufall.com   → 127.0.0.1:3010 (conteneur portfolio)
 ```
 
-Vérifiez que cette URL affiche bien le site avant d'ajouter le domaine
-personnalisé.
+Règles :
 
-### A.2. Ajouter le domaine `mameboufall.com`
+- Le portfolio Docker écoute **uniquement** `127.0.0.1:3010` (pas exposé
+  publiquement).
+- On **ajoute** un vhost Nginx ; on ne remplace pas la config FTF.
+- Fichiers utiles dans le dépôt :
+  - [`deploy/hetzner/nginx-mameboufall.conf`](../deploy/hetzner/nginx-mameboufall.conf)
+  - [`deploy/hetzner/setup-portfolio.sh`](../deploy/hetzner/setup-portfolio.sh)
+  - [`deploy/hetzner/inspect.sh`](../deploy/hetzner/inspect.sh)
+  - [`deploy/hetzner/.env.example`](../deploy/hetzner/.env.example)
 
-1. Projet Vercel → **Settings** → **Domains**.
-2. Ajoutez :
-   - `mameboufall.com`
-   - `www.mameboufall.com`
-3. Configuration **recommandée** (domaine principal = apex) :
+Serveur cible :
 
-   | Domaine | Réglage Vercel |
-   | ------- | -------------- |
-   | `mameboufall.com` | **Connect to environment** → **Production** |
-   | `www.mameboufall.com` | **Redirect** → `mameboufall.com` (308 permanent) |
+| Champ | Valeur |
+| ----- | ------ |
+| Projet Hetzner | VBS Digital |
+| Serveur | `ubuntu-8gb-fsn1-1` (CX33) |
+| IPv4 | `46.224.76.38` |
+| Proxy détecté | Nginx 1.31.3 |
+| App coexistante | FTF · Fall Trading Farmer |
 
-> Important : ne redirigez **pas** `www` vers l'URL `*.vercel.app`. La cible
-> doit être `mameboufall.com`.
+### A.1. Inspecter (optionnel mais recommandé)
 
-4. Cliquez sur **Save** / **Sauvegarder**.
+En SSH sur le VPS :
 
-### A.3. DNS chez le registrar (Namecheap)
+```bash
+curl -fsSL https://raw.githubusercontent.com/FALL21/Mon_portfolio/main/deploy/hetzner/inspect.sh | bash
+```
 
-Dans **Advanced DNS**, configurez exactement :
+Vérifiez que les ports `80`/`443` sont bien tenus par Nginx, et que `3010`
+est libre.
+
+### A.2. Déployer le portfolio (Docker)
+
+```bash
+sudo bash -c 'curl -fsSL https://raw.githubusercontent.com/FALL21/Mon_portfolio/main/deploy/hetzner/setup-portfolio.sh | bash'
+```
+
+Ou manuellement :
+
+```bash
+sudo mkdir -p /opt/portfolio && cd /opt/portfolio
+sudo git clone https://github.com/FALL21/Mon_portfolio.git .
+# si déjà cloné : sudo git -C /opt/portfolio pull --ff-only
+echo 'PORTFOLIO_PUBLISH=127.0.0.1:3010' | sudo tee /opt/portfolio/.env
+cd /opt/portfolio && sudo docker compose up -d --build
+curl -sI http://127.0.0.1:3010 | head -5
+```
+
+Attendu : HTTP **200**. L'app FTF n'est pas touchée.
+
+Variable d'environnement (voir [`docker-compose.yml`](../docker-compose.yml)) :
+
+| Variable | Local (défaut) | Prod Hetzner |
+| -------- | -------------- | ------------ |
+| `PORTFOLIO_PUBLISH` | `3000` | `127.0.0.1:3010` |
+
+### A.3. Ajouter le vhost Nginx (sans casser FTF)
+
+Si le script n'a pas pu activer le vhost (Nginx dans Docker, chemins
+différents), ajoutez-le à la main.
+
+**Nginx système** (`sites-available`) :
+
+```bash
+sudo cp /opt/portfolio/deploy/hetzner/nginx-mameboufall.conf \
+  /etc/nginx/sites-available/mameboufall.com
+sudo ln -sfn /etc/nginx/sites-available/mameboufall.com \
+  /etc/nginx/sites-enabled/mameboufall.com
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+**Nginx en conteneur** : copiez le même bloc `server { ... }` dans le
+`conf.d` / volume monté du conteneur proxy, **en plus** des fichiers FTF,
+puis rechargez Nginx dans ce conteneur (`nginx -s reload`).
+
+Test avant bascule DNS (Host header) :
+
+```bash
+curl -sI -H 'Host: mameboufall.com' http://127.0.0.1 | head -10
+```
+
+### A.4. Bascule DNS Namecheap
+
+Dans **Advanced DNS**, remplacer les enregistrements Vercel par :
 
 | Type | Host | Value | TTL |
 | ---- | ---- | ----- | --- |
-| **A** | `@` | `216.198.79.1` | Automatic |
-| **CNAME** | `www` | `cname.vercel-dns.com.` | Automatic |
+| **A** | `@` | `46.224.76.38` | Automatic |
+| **A** | `www` | `46.224.76.38` | Automatic |
 
-#### À ne pas faire
+À supprimer :
 
-- Ne laissez **pas** un CNAME `www` vers `parkingpage.namecheap.com`
-  (page parking Namecheap).
-- Ne cumulez **pas** un **URL Redirect Record** sur `@` avec le **A Record**
-  vers Vercel : les deux se contredisent.
-- N'utilisez pas d'ancien IP Vercel (`76.76.21.21`) si le tableau Domains
-  affiche une nouvelle IP recommandée : suivez la valeur indiquée dans Vercel
-  (aujourd'hui typiquement `216.198.79.1`).
+- A `@` vers IP Vercel (`216.198.79.1`, etc.)
+- CNAME `www` vers `cname.vercel-dns.com` / `*.vercel-dns-*.com`
+- Tout **URL Redirect** conflictuel sur `@`
 
-Cliquez sur **Save All Changes** chez Namecheap.
+Dans **Vercel → Domains** : retirer `mameboufall.com` et `www` (évite les
+conflits de certificat). Garder le projet pour l'URL `*.vercel.app` en
+secours.
 
-### A.4. SSL (HTTPS)
-
-Vercel obtient automatiquement un certificat Let's Encrypt.
-
-Statuts possibles dans **Domains** :
-
-| Statut | Signification | Action |
-| ------ | ------------- | ------ |
-| Valid Configuration | DNS + SSL OK | Aucune |
-| Generating SSL Certificate | Certificat en cours | Attendre 1–15 min, puis Rafraîchir |
-| Invalid Configuration | DNS incorrect ou non propagé | Corriger le DNS, Rafraîchir |
-| DNS Change Recommended | Nouvelle IP Vercel suggérée | Mettre à jour le A Record |
-
-### A.5. Vérification
+### A.5. SSL (Certbot) après propagation DNS
 
 ```bash
-# DNS
-nslookup -type=A mameboufall.com 8.8.8.8
-nslookup -type=CNAME www.mameboufall.com 8.8.8.8
+dig +short A mameboufall.com @8.8.8.8
+# doit afficher 46.224.76.38
 
-# Site (doit répondre 200 sur l'apex une fois la config ci-dessus appliquée)
+sudo certbot --nginx -d mameboufall.com -d www.mameboufall.com
+```
+
+Si Nginx est dans Docker, adaptez (certbot en conteneur, ou volumes
+Let's Encrypt déjà utilisés par FTF).
+
+### A.6. Vérification
+
+```bash
 curl -sI https://mameboufall.com | head -15
 curl -sI https://www.mameboufall.com | head -15
+# Vérifier aussi l'URL / domaine de FTF (doit rester inchangé)
 ```
 
 Attendu :
 
-- Apex `A` → IP Vercel (`216.198.79.1` ou celle affichée dans le dashboard)
-- `www` CNAME → `cname.vercel-dns.com` (ou un alias `*.vercel-dns-*.com`)
-- `https://mameboufall.com` → **200**
-- `https://www.mameboufall.com` → **308** vers `https://mameboufall.com/`
+- `https://mameboufall.com` → **200** (portfolio, Nginx)
+- `www` → 200 ou redirection vers l'apex
+- FTF toujours accessible comme avant
 
-URL de production : **[https://mameboufall.com](https://mameboufall.com)**
-
-### A.6. Mises à jour après le premier déploiement
-
-Chaque `git push` sur `main` redéploie automatiquement :
+### A.7. Mises à jour du portfolio
 
 ```bash
-# depuis la machine locale
-git add -A
-git commit -m "Mise à jour du contenu"
-git push origin main
+cd /opt/portfolio
+sudo git pull --ff-only
+sudo docker compose up -d --build
 ```
-
-Suivez le build dans Vercel → **Deployments**. En cas d'échec, consultez les
-logs de build (souvent une erreur TypeScript ou une dépendance manquante).
-
-### A.7. Dépannage DNS / navigateur
-
-**Symptôme :** Vercel affiche « Configuration valide » mais Chrome montre
-`ERR_CONNECTION_CLOSED` sur `www`.
-
-**Cause fréquente :** cache DNS local encore pointé vers
-`parkingpage.namecheap.com` (`216.227.142.170`), alors que Google DNS (`8.8.8.8`)
-a déjà la bonne valeur Vercel.
-
-**Solutions :**
-
-1. Vider le cache DNS macOS :
-
-   ```bash
-   sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
-   ```
-
-2. Tester en navigation privée, ou forcer le DNS `8.8.8.8` / `1.1.1.1`.
-3. Vérifier avec :
-
-   ```bash
-   dig +short www.mameboufall.com @8.8.8.8
-   dig +short www.mameboufall.com   # résolveur local
-   ```
-
-4. Utiliser l'apex `https://mameboufall.com` en attendant la fin de propagation
-   de `www` (quelques minutes à 48 h selon le TTL).
-
-Plus de cas dans le [chapitre 08 · Dépannage](./08-depannage.md).
 
 ---
 
 ## B. Docker local / Compose
-
-Utile pour valider le build de production avant un push, ou pour une démo
-hors-ligne.
-
-### Build & démarrage
 
 ```bash
 docker compose up -d --build
@@ -197,132 +192,40 @@ docker compose up -d --build
 Site : **http://localhost:3000**
 
 ```bash
-docker compose ps          # état + healthcheck
-docker compose logs -f     # logs
-docker compose down        # arrêt
+docker compose ps
+docker compose logs -f
+docker compose down
 ```
 
-### Dockerfile (rappel)
-
-[`Dockerfile`](../Dockerfile) : construction **multi-stage** en trois étapes.
-
-| Étape | Base | Rôle |
-| ----- | ---- | ---- |
-| `deps` | `node:22-alpine` | `npm ci` |
-| `builder` | `node:22-alpine` | `npm run build` |
-| `runner` | `node:22-alpine` | Image finale (`public/`, `.next/standalone`, `.next/static`) |
-
-Points clés :
-
-- Utilisateur non-root `nextjs` (uid 1001)
-- `output: "standalone"` → image légère
-- `CMD ["node", "server.js"]`
-- `NEXT_TELEMETRY_DISABLED=1`
-
-[`docker-compose.yml`](../docker-compose.yml) :
-
-- Port `3000:3000`
-- `restart: unless-stopped`
-- Healthcheck HTTP sur `http://localhost:3000`
-
-### Docker sans Compose
-
-```bash
-docker build -t portfolio-mamebou-fall .
-docker run --rm -p 3000:3000 portfolio-mamebou-fall
-```
+[`Dockerfile`](../Dockerfile) : multi-stage (`deps` → `builder` → `runner`),
+utilisateur non-root `nextjs`, `output: "standalone"`.
 
 ---
 
-## C. VPS + Docker + reverse proxy
+## C. Vercel (secours / preview)
 
-Pour un serveur (Hetzner, DigitalOcean, OVH, etc.) :
+Utile pour une URL de preview `*.vercel.app` sans toucher au DNS de
+`mameboufall.com`.
 
-1. Installer **Docker Engine** + plugin **Compose**.
-2. Cloner le dépôt :
-
-   ```bash
-   git clone https://github.com/FALL21/Mon_portfolio.git
-   cd Mon_portfolio
-   docker compose up -d --build
-   ```
-
-3. Placer un reverse proxy HTTPS devant le port `3000`.
-
-### Caddy (HTTPS automatique)
-
-`Caddyfile` :
-
-```
-mameboufall.com, www.mameboufall.com {
-    reverse_proxy localhost:3000
-}
-```
-
-Redirection `www` → apex (optionnel, dans Caddy) :
-
-```
-www.mameboufall.com {
-    redir https://mameboufall.com{uri} permanent
-}
-
-mameboufall.com {
-    reverse_proxy localhost:3000
-}
-```
-
-DNS VPS typique (hors Vercel) :
-
-| Type | Host | Value |
-| ---- | ---- | ----- |
-| A | `@` | IP publique du VPS |
-| A ou CNAME | `www` | IP du VPS ou `@` |
-
-### Nginx + Certbot
-
-```nginx
-server {
-    listen 80;
-    server_name mameboufall.com www.mameboufall.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-Puis :
-
-```bash
-sudo certbot --nginx -d mameboufall.com -d www.mameboufall.com
-```
-
-### Mise à jour sur VPS
-
-```bash
-git pull
-docker compose up -d --build
-```
+1. Importer [`FALL21/Mon_portfolio`](https://github.com/FALL21/Mon_portfolio)
+   sur [vercel.com](https://vercel.com).
+2. Framework : Next.js (détecté). Aucune variable d'env requise.
+3. **Ne pas** attacher `mameboufall.com` si la prod est sur Hetzner.
+4. Chaque `git push` sur `main` redéploie la preview Vercel.
 
 ---
 
-## Checklist de mise en production
+## Checklist de mise en production (Hetzner)
 
-- [ ] Code poussé sur `main` (`FALL21/Mon_portfolio`)
-- [ ] Build Vercel (ou Docker) réussi
-- [ ] URL `*.vercel.app` (ou `localhost:3000`) testée
-- [ ] Domaines `mameboufall.com` + `www` ajoutés dans Vercel
-- [ ] Apex = Production ; `www` = redirect 308 vers apex
-- [ ] DNS A `@` → IP Vercel ; CNAME `www` → `cname.vercel-dns.com.`
-- [ ] Pas de parking Namecheap ni de URL Redirect conflictuel sur `@`
-- [ ] SSL « Valid Configuration » sur les deux domaines
-- [ ] `https://mameboufall.com` répond 200
-- [ ] Photo (`public/profile.jpg`) et CV (`public/CV_Mame_Bou_FALL.pdf`) OK
-- [ ] Liens contact / LinkedIn / VBS vérifiés
+- [ ] Code sur `main` (`FALL21/Mon_portfolio`)
+- [ ] `docker compose` up sur le VPS, `curl http://127.0.0.1:3010` → 200
+- [ ] Vhost Nginx `mameboufall.com` ajouté (FTF intact)
+- [ ] DNS A `@` et `www` → `46.224.76.38`
+- [ ] Domaines retirés de Vercel
+- [ ] Certbot SSL OK
+- [ ] `https://mameboufall.com` → 200
+- [ ] Site FTF toujours OK
+- [ ] Photo + CV OK
 
 ---
 
@@ -336,8 +239,9 @@ docker compose up -d --build
 | sitemap | `src/app/sitemap.ts` |
 | Image Docker | `Dockerfile` |
 | Orchestration | `docker-compose.yml` |
-| Mode standalone | `next.config.mjs` |
-| Variables (optionnel) | `.env.example` |
+| Bind port prod | `PORTFOLIO_PUBLISH` / `deploy/hetzner/.env.example` |
+| Vhost Nginx | `deploy/hetzner/nginx-mameboufall.conf` |
+| Script install | `deploy/hetzner/setup-portfolio.sh` |
 | Dépôt distant | `https://github.com/FALL21/Mon_portfolio.git` |
 
 ---

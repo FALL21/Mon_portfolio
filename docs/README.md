@@ -17,7 +17,7 @@ des composants, le déploiement, le SEO/performance et le dépannage.
 | 03 | [Personnalisation du contenu](./03-personnalisation.md) | Éditer `portfolio.ts`, changer la photo, le CV, les projets. |
 | 04 | [Système de design](./04-design-system.md) | Couleurs, typographie, tokens, glassmorphism, la signature *NeuralMesh*. |
 | 05 | [Référence des composants](./05-composants.md) | Rôle et props de chaque composant `src/components`. |
-| 06 | [Déploiement](./06-deploiement.md) | Vercel + domaine, DNS Namecheap, Docker, VPS. |
+| 06 | [Déploiement](./06-deploiement.md) | Hetzner + Nginx + Docker, DNS Namecheap, Vercel preview. |
 | 07 | [SEO & performance](./07-seo-performance.md) | Metadata, Open Graph, JSON-LD, sitemap, optimisations. |
 | 08 | [Dépannage & FAQ](./08-depannage.md) | Problèmes fréquents et solutions. |
 

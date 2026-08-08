@@ -7,7 +7,9 @@ services:
     container_name: portfolio-mamebou-fall
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      # Local : 3000:3000 (défaut)
+      # Prod Hetzner : PORTFOLIO_PUBLISH=127.0.0.1:3010
+      - "${PORTFOLIO_PUBLISH:-3000}:3000"
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1

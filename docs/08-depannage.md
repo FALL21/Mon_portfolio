@@ -92,34 +92,44 @@ Sur `https://mameboufall.com`. Remplacez-la dans `layout.tsx`, `robots.ts` et
 
 ### Vercel dit « Configuration valide » mais le navigateur affiche ERR_CONNECTION_CLOSED
 
-Cause fréquente : le DNS local résout encore `www` vers la page parking
-Namecheap (`parkingpage.namecheap.com`), alors que Vercel / Google DNS ont déjà
-la bonne valeur.
+Cause fréquente (si le domaine pointe encore vers Vercel) : le DNS local résout
+encore `www` vers la page parking Namecheap.
 
-1. Vérifiez le CNAME `www` chez le registrar : `cname.vercel-dns.com.`
-   (pas `parkingpage.namecheap.com`).
-2. Supprimez tout **URL Redirect** Namecheap sur `@` en conflit avec le A Record.
-3. Videz le cache DNS macOS :
+1. Vérifiez les enregistrements DNS chez Namecheap (prod Hetzner : A `@` et
+   `www` → `46.224.76.38`).
+2. Videz le cache DNS macOS :
 
    ```bash
    sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
    ```
 
-4. Comparez :
+3. Comparez :
 
    ```bash
-   dig +short www.mameboufall.com @8.8.8.8
-   dig +short www.mameboufall.com
+   dig +short A mameboufall.com @8.8.8.8
+   dig +short A mameboufall.com
    ```
 
-5. En attendant la propagation, utilisez `https://mameboufall.com` (apex).
+Détails : [chapitre 06](./06-deploiement.md).
 
-Détails complets : [chapitre 06 · A.7](./06-deploiement.md#a7-dépannage-dns--navigateur).
+### Le portfolio Hetzner affiche encore FTF / mauvaise app
+
+Le vhost `mameboufall.com` n'est pas actif, ou le DNS ne pointe pas encore vers
+`46.224.76.38`. Vérifiez :
+
+```bash
+curl -sI http://127.0.0.1:3010 | head -5
+sudo nginx -t
+ls /etc/nginx/sites-enabled/
+dig +short A mameboufall.com @8.8.8.8
+```
+
+Ne modifiez pas les vhosts FTF ; ajoutez seulement `mameboufall.com`.
 
 ### www redirige vers mon-portfolio-xxxx.vercel.app
 
-Dans Vercel → Domains → Edit sur `www` : la cible de la redirection 308 doit être
-`mameboufall.com`, **pas** l'URL `*.vercel.app`.
+Le domaine est encore géré par Vercel. Retirez `mameboufall.com` / `www` dans
+Vercel → Domains, et pointez les A records Namecheap vers `46.224.76.38`.
 
 ---
 
@@ -136,7 +146,7 @@ Dans Vercel → Domains → Edit sur `www` : la cible de la redirection 308 doit
 | Régler le SEO / domaine | `src/app/layout.tsx`, `robots.ts`, `sitemap.ts` |
 | Ajuster le fond animé | `src/components/NeuralMesh.tsx` |
 | Config Docker | `Dockerfile`, `docker-compose.yml` |
-| Déploiement Vercel / DNS | `docs/06-deploiement.md` |
+| Déploiement Hetzner / DNS | `docs/06-deploiement.md`, `deploy/hetzner/` |
 
 ---
 
