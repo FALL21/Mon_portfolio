@@ -1,0 +1,15 @@
+# Overlay production Hetzner (coexistence avec FTF) :
+#   docker compose -f docker-compose.yml -f docker-compose.hetzner.yml up -d --build
+#
+# Requiert le réseau Docker externe `ftf-prod` (créé par /opt/ftf).
+services:
+  portfolio:
+    ports:
+      - "127.0.0.1:3010:3000"
+    networks:
+      - default
+      - ftf-prod
+
+networks:
+  ftf-prod:
+    external: true

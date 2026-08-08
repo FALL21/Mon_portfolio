@@ -40,22 +40,29 @@ Voir [chapitre 07](./07-seo-performance.md).
 Internet
    │
    ▼
-Nginx :80 / :443          ← déjà en place (sert aussi FTF)
+ftf-frontend-prod (Nginx 1.31.3) :80 / :443
+   │  fichier : /opt/ftf/docker/nginx.conf
    │
-   ├─ Host: (domaine FTF)     → app existante (inchangée)
-   └─ Host: mameboufall.com   → 127.0.0.1:3010 (conteneur portfolio)
+   ├─ Host: falltradingfarmer.com  → SPA FTF (inchangé)
+   └─ Host: mameboufall.com        → portfolio-mamebou-fall:3000
+                                      (réseau Docker ftf-prod)
 ```
 
 Règles :
 
-- Le portfolio Docker écoute **uniquement** `127.0.0.1:3010` (pas exposé
-  publiquement).
-- On **ajoute** un vhost Nginx ; on ne remplace pas la config FTF.
-- Fichiers utiles dans le dépôt :
+- Nginx tourne **dans** le conteneur FTF (`ftf-frontend-prod`), pas en
+  package système.
+- Le portfolio rejoint le réseau externe **`ftf-prod`**
+  ([`docker-compose.hetzner.yml`](../docker-compose.hetzner.yml)).
+- Bind hôte `127.0.0.1:3010` (debug local) ; le proxy utilise le nom de
+  conteneur.
+- On **ajoute** des blocs `server` dans `nginx.conf` ; on ne remplace pas
+  les vhosts FTF.
+- Fichiers utiles :
   - [`deploy/hetzner/nginx-mameboufall.conf`](../deploy/hetzner/nginx-mameboufall.conf)
   - [`deploy/hetzner/setup-portfolio.sh`](../deploy/hetzner/setup-portfolio.sh)
-  - [`deploy/hetzner/inspect.sh`](../deploy/hetzner/inspect.sh)
-  - [`deploy/hetzner/.env.example`](../deploy/hetzner/.env.example)
+  - [`deploy/hetzner/issue-ssl.sh`](../deploy/hetzner/issue-ssl.sh)
+  - [`docker-compose.hetzner.yml`](../docker-compose.hetzner.yml)
 
 Serveur cible :
 
@@ -64,8 +71,9 @@ Serveur cible :
 | Projet Hetzner | VBS Digital |
 | Serveur | `ubuntu-8gb-fsn1-1` (CX33) |
 | IPv4 | `46.224.76.38` |
-| Proxy détecté | Nginx 1.31.3 |
-| App coexistante | FTF · Fall Trading Farmer |
+| Proxy | Nginx dans `ftf-frontend-prod` |
+| App coexistante | FTF · [falltradingfarmer.com](https://falltradingfarmer.com) |
+| Portfolio | `/opt/portfolio` · conteneur `portfolio-mamebou-fall` |
 
 ### A.1. Inspecter (optionnel mais recommandé)
 
@@ -81,54 +89,39 @@ est libre.
 ### A.2. Déployer le portfolio (Docker)
 
 ```bash
-sudo bash -c 'curl -fsSL https://raw.githubusercontent.com/FALL21/Mon_portfolio/main/deploy/hetzner/setup-portfolio.sh | bash'
-```
-
-Ou manuellement :
-
-```bash
-sudo mkdir -p /opt/portfolio && cd /opt/portfolio
-sudo git clone https://github.com/FALL21/Mon_portfolio.git .
+sudo mkdir -p /opt/portfolio
+sudo git clone https://github.com/FALL21/Mon_portfolio.git /opt/portfolio
 # si déjà cloné : sudo git -C /opt/portfolio pull --ff-only
-echo 'PORTFOLIO_PUBLISH=127.0.0.1:3010' | sudo tee /opt/portfolio/.env
-cd /opt/portfolio && sudo docker compose up -d --build
+cd /opt/portfolio
+sudo docker compose -f docker-compose.yml -f docker-compose.hetzner.yml up -d --build
 curl -sI http://127.0.0.1:3010 | head -5
 ```
 
-Attendu : HTTP **200**. L'app FTF n'est pas touchée.
+Attendu : HTTP **200**. FTF n'est pas redémarré.
 
-Variable d'environnement (voir [`docker-compose.yml`](../docker-compose.yml)) :
+### A.3. Ajouter le vhost dans Nginx FTF (sans casser FTF)
 
-| Variable | Local (défaut) | Prod Hetzner |
-| -------- | -------------- | ------------ |
-| `PORTFOLIO_PUBLISH` | `3000` | `127.0.0.1:3010` |
-
-### A.3. Ajouter le vhost Nginx (sans casser FTF)
-
-Si le script n'a pas pu activer le vhost (Nginx dans Docker, chemins
-différents), ajoutez-le à la main.
-
-**Nginx système** (`sites-available`) :
+1. Sauvegarder : `cp /opt/ftf/docker/nginx.conf /opt/ftf/docker/nginx.conf.bak`
+2. **Ajouter** (pas remplacer) le contenu de
+   [`deploy/hetzner/nginx-mameboufall.conf`](../deploy/hetzner/nginx-mameboufall.conf)
+   à la fin de `/opt/ftf/docker/nginx.conf`
+3. Recharger :
 
 ```bash
-sudo cp /opt/portfolio/deploy/hetzner/nginx-mameboufall.conf \
-  /etc/nginx/sites-available/mameboufall.com
-sudo ln -sfn /etc/nginx/sites-available/mameboufall.com \
-  /etc/nginx/sites-enabled/mameboufall.com
-sudo nginx -t && sudo systemctl reload nginx
+docker exec ftf-frontend-prod nginx -t
+docker exec ftf-frontend-prod nginx -s reload
 ```
 
-**Nginx en conteneur** : copiez le même bloc `server { ... }` dans le
-`conf.d` / volume monté du conteneur proxy, **en plus** des fichiers FTF,
-puis rechargez Nginx dans ce conteneur (`nginx -s reload`).
-
-Test avant bascule DNS (Host header) :
+Test avant bascule DNS :
 
 ```bash
 curl -sI -H 'Host: mameboufall.com' http://127.0.0.1 | head -10
+# → 200, title portfolio
+curl -skI https://falltradingfarmer.com | head -10
+# → 200 FTF
 ```
 
-### A.4. Bascule DNS Namecheap
+### A.4. Bascule DNS Namecheap (à faire manuellement)
 
 Dans **Advanced DNS**, remplacer les enregistrements Vercel par :
 
@@ -137,48 +130,34 @@ Dans **Advanced DNS**, remplacer les enregistrements Vercel par :
 | **A** | `@` | `46.224.76.38` | Automatic |
 | **A** | `www` | `46.224.76.38` | Automatic |
 
-À supprimer :
+À supprimer : IP / CNAME Vercel, URL Redirect conflictuels.
 
-- A `@` vers IP Vercel (`216.198.79.1`, etc.)
-- CNAME `www` vers `cname.vercel-dns.com` / `*.vercel-dns-*.com`
-- Tout **URL Redirect** conflictuel sur `@`
+Dans **Vercel → Domains** : retirer `mameboufall.com` et `www`.
 
-Dans **Vercel → Domains** : retirer `mameboufall.com` et `www` (évite les
-conflits de certificat). Garder le projet pour l'URL `*.vercel.app` en
-secours.
-
-### A.5. SSL (Certbot) après propagation DNS
+### A.5. SSL après propagation DNS
 
 ```bash
-dig +short A mameboufall.com @8.8.8.8
-# doit afficher 46.224.76.38
-
-sudo certbot --nginx -d mameboufall.com -d www.mameboufall.com
+dig +short A mameboufall.com @8.8.8.8   # → 46.224.76.38
+sudo bash /opt/portfolio/deploy/hetzner/issue-ssl.sh
 ```
 
-Si Nginx est dans Docker, adaptez (certbot en conteneur, ou volumes
-Let's Encrypt déjà utilisés par FTF).
+Puis activer le bloc HTTPS commenté dans `nginx.conf` et recharger Nginx.
+Faire aussi rediriger le `location /` HTTP vers HTTPS (comme FTF).
 
 ### A.6. Vérification
 
 ```bash
 curl -sI https://mameboufall.com | head -15
-curl -sI https://www.mameboufall.com | head -15
-# Vérifier aussi l'URL / domaine de FTF (doit rester inchangé)
+curl -skI https://falltradingfarmer.com | head -10
 ```
-
-Attendu :
-
-- `https://mameboufall.com` → **200** (portfolio, Nginx)
-- `www` → 200 ou redirection vers l'apex
-- FTF toujours accessible comme avant
 
 ### A.7. Mises à jour du portfolio
 
 ```bash
 cd /opt/portfolio
 sudo git pull --ff-only
-sudo docker compose up -d --build
+sudo docker compose -f docker-compose.yml -f docker-compose.hetzner.yml up -d --build
+docker exec ftf-frontend-prod nginx -s reload   # si upstream a changé d'IP
 ```
 
 ---
