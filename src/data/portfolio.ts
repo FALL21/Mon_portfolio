@@ -224,15 +224,6 @@ export const experiences: Experience[] = [
     ],
   },
   {
-    role: "Ingénieur DevOps",
-    company: "GRE, Dakar",
-    period: "Jan. 2022 – Déc. 2024",
-    points: [
-      "Plateforme centralisée de gestion et suivi des réclamations des résidents.",
-      "Tableaux de bord décisionnels temps réel des indicateurs de performance.",
-    ],
-  },
-  {
     role: "Chargé de cours",
     company: "GoMyCode, Dakar",
     period: "Depuis déc. 2021",
