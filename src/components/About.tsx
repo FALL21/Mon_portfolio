@@ -2,18 +2,20 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { about, profile, languages } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function About() {
+  const { about, profile, languages } = usePortfolio();
+  const t = useUI();
+
   return (
     <section id="apropos" className="section-pad">
       <div className="container-x">
-        <SectionHeading index="01" eyebrow="À propos" title="Le pont entre la recherche et le terrain" />
+        <SectionHeading index={t.about.index} eyebrow={t.about.eyebrow} title={t.about.title} />
 
         <div className="grid items-start gap-10 md:grid-cols-[320px_1fr] md:gap-14">
-          {/* Photo */}
           <Reveal>
             <div className="relative mx-auto w-full max-w-[300px]">
               <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-primary/30 to-transparent blur-2xl" />
@@ -31,12 +33,11 @@ export default function About() {
               </div>
               <div className="glass-strong absolute -bottom-4 -right-3 rounded-2xl px-4 py-3 shadow-card">
                 <p className="font-mono text-lg font-semibold text-primary">4+ ans</p>
-                <p className="text-[11px] text-muted">d&apos;expérience</p>
+                <p className="text-[11px] text-muted">{t.about.experience}</p>
               </div>
             </div>
           </Reveal>
 
-          {/* Texte */}
           <div>
             {about.paragraphs.map((p, idx) => (
               <Reveal key={idx} delay={idx * 0.08}>

@@ -1,18 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { skillGroups } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function Skills() {
+  const { skillGroups } = usePortfolio();
+  const t = useUI();
+
   return (
     <section id="competences" className="section-pad bg-surface/30">
       <div className="container-x">
         <SectionHeading
-          index="03"
-          eyebrow="Compétences"
-          title="Une stack complète, de la donnée au produit"
+          index={t.skills.index}
+          eyebrow={t.skills.eyebrow}
+          title={t.skills.title}
         />
 
         <div className="grid gap-5 md:grid-cols-2">

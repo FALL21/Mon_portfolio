@@ -2,17 +2,20 @@
 
 import { motion } from "framer-motion";
 import { Mail, Phone, Linkedin, Github, Download, ArrowRight } from "lucide-react";
-import { profile } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import Reveal from "./Reveal";
 
-const items = [
-  { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}`, external: false },
-  { icon: Phone, label: "Téléphone", value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, external: false },
-  { icon: Linkedin, label: "LinkedIn", value: profile.linkedinHandle, href: profile.linkedin, external: true },
-  { icon: Github, label: "GitHub", value: profile.githubHandle, href: profile.github, external: true },
-];
-
 export default function Contact() {
+  const { profile } = usePortfolio();
+  const t = useUI();
+
+  const items = [
+    { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}`, external: false },
+    { icon: Phone, label: t.contact.eyebrow === "Contact" ? "Phone" : "Téléphone", value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, external: false },
+    { icon: Linkedin, label: "LinkedIn", value: profile.linkedinHandle, href: profile.linkedin, external: true },
+    { icon: Github, label: "GitHub", value: profile.githubHandle, href: profile.github, external: true },
+  ];
+
   return (
     <section id="contact" className="section-pad">
       <div className="container-x">
@@ -22,14 +25,13 @@ export default function Contact() {
             <div className="bg-dotgrid pointer-events-none absolute inset-0 opacity-40" />
 
             <div className="relative">
-              <p className="eyebrow">Contact</p>
+              <p className="eyebrow">{t.contact.eyebrow}</p>
               <h2 className="mx-auto mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-                Transformons votre idée en{" "}
-                <span className="text-gradient">solution concrète</span>
+                {t.contact.title}{" "}
+                <span className="text-gradient">{t.contact.titleHighlight}</span>
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-base text-muted">
-                Un projet IA, une plateforme SaaS ou un besoin en formation ? Écrivez-moi, je
-                réponds rapidement.
+                {t.contact.subtitle}
               </p>
 
               <div className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -59,7 +61,7 @@ export default function Contact() {
                   href={`mailto:${profile.email}`}
                   className="group flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-base transition hover:bg-primary/90 hover:shadow-glow"
                 >
-                  Démarrer une conversation
+                  {t.contact.cta}
                   <ArrowRight size={16} className="transition group-hover:translate-x-1" />
                 </a>
                 <a
@@ -67,7 +69,7 @@ export default function Contact() {
                   download
                   className="glass flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
                 >
-                  <Download size={16} /> Mon CV
+                  <Download size={16} /> {t.contact.cv}
                 </a>
               </div>
             </div>

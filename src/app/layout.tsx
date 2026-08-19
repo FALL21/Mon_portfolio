@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { profile } from "@/data/portfolio";
+import { LocaleProvider } from "@/context/LocaleContext";
 
-// Polices auto-hébergées, sous-ensemble latin uniquement (évite cyrillique, vietnamien, etc.)
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/plus-jakarta-sans/latin-600.css";
 import "@fontsource/plus-jakarta-sans/latin-700.css";
@@ -67,13 +67,13 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <body className="font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
   );

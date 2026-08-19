@@ -1,22 +1,23 @@
 "use client";
 
-import { timeline } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function Timeline() {
+  const { timeline } = usePortfolio();
+  const t = useUI();
+
   return (
     <section id="parcours" className="section-pad">
       <div className="container-x">
         <SectionHeading
-          index="02"
-          eyebrow="Parcours"
-          title="Des mathématiques à l'IA en production"
-          description="Un fil conducteur : la rigueur analytique mise au service de produits qui tournent réellement."
+          index={t.timeline.index}
+          eyebrow={t.timeline.eyebrow}
+          title={t.timeline.title}
         />
 
         <div className="relative ml-2">
-          {/* Ligne verticale */}
           <div className="absolute left-[15px] top-2 h-[calc(100%-1rem)] w-px bg-gradient-to-b from-primary/60 via-primary/20 to-transparent" />
 
           <div className="space-y-8">

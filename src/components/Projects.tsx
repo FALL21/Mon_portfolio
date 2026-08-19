@@ -2,19 +2,21 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle2 } from "lucide-react";
-import { projects } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function Projects() {
+  const { projects } = usePortfolio();
+  const ui = useUI();
+
   return (
     <section id="projets" className="section-pad bg-surface/30">
       <div className="container-x">
         <SectionHeading
-          index="05"
-          eyebrow="Projets"
-          title="Des produits qui tournent en production"
-          description="Sélection de réalisations, de la vision par ordinateur biométrique aux plateformes SaaS."
+          index={ui.projects.index}
+          eyebrow={ui.projects.eyebrow}
+          title={ui.projects.title}
         />
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -24,7 +26,6 @@ export default function Projects() {
                 whileHover={{ y: -5 }}
                 className="glass group relative flex h-full flex-col overflow-hidden rounded-3xl p-7"
               >
-                {/* Halo d'accent */}
                 <div
                   className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-20 blur-3xl transition group-hover:opacity-40"
                   style={{ background: p.accent }}
@@ -44,7 +45,7 @@ export default function Projects() {
                       href={p.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`Ouvrir ${p.name}`}
+                      aria-label={`${ui.projects.viewProject} ${p.name}`}
                       className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/5 text-white transition hover:bg-primary hover:text-base"
                     >
                       <ArrowUpRight size={17} />
@@ -64,12 +65,12 @@ export default function Projects() {
                 </ul>
 
                 <div className="mt-auto flex flex-wrap gap-2 pt-6">
-                  {p.tech.map((t) => (
+                  {p.tech.map((techItem) => (
                     <span
-                      key={t}
+                      key={techItem}
                       className="rounded-md border border-white/5 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-muted"
                     >
-                      {t}
+                      {techItem}
                     </span>
                   ))}
                 </div>

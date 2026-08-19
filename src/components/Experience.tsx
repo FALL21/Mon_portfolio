@@ -1,18 +1,20 @@
 "use client";
 
 import { GraduationCap } from "lucide-react";
-import { experiences, education } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function Experience() {
+  const { experiences, education } = usePortfolio();
+  const t = useUI();
+
   return (
     <section id="experience" className="section-pad">
       <div className="container-x">
-        <SectionHeading index="06" eyebrow="Expérience" title="Parcours professionnel" />
+        <SectionHeading index={t.experience.index} eyebrow={t.experience.eyebrow} title={t.experience.title} />
 
         <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
-          {/* Expériences */}
           <div className="space-y-4">
             {experiences.map((e, i) => (
               <Reveal key={e.role + e.company} delay={i * 0.05}>
@@ -35,13 +37,12 @@ export default function Experience() {
             ))}
           </div>
 
-          {/* Formation */}
           <div>
             <Reveal>
               <div className="mb-4 flex items-center gap-2">
                 <GraduationCap size={18} className="text-primary" />
                 <h3 className="font-display text-lg font-semibold text-white">
-                  Diplômes & Formation
+                  {t.experience.education}
                 </h3>
               </div>
             </Reveal>

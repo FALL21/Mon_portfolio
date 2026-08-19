@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { stats } from "@/data/portfolio";
+import { usePortfolio } from "@/context/LocaleContext";
 
 function Counter({
   value,
@@ -57,6 +57,8 @@ function Counter({
 }
 
 export default function Stats() {
+  const { stats } = usePortfolio();
+
   return (
     <section className="border-y border-white/5 bg-surface/40">
       <div className="container-x grid grid-cols-2 gap-px overflow-hidden px-5 sm:px-8 md:grid-cols-4">

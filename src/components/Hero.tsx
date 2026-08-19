@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Download, MapPin, Sparkles } from "lucide-react";
-import { profile } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 
 const NeuralMesh = dynamic(() => import("./NeuralMesh"), {
   ssr: false,
@@ -12,15 +12,16 @@ const NeuralMesh = dynamic(() => import("./NeuralMesh"), {
 });
 
 export default function Hero() {
+  const { profile } = usePortfolio();
+  const t = useUI();
   const [i, setI] = useState(0);
   const [meshReady, setMeshReady] = useState(false);
 
   useEffect(() => {
-    const t = setInterval(() => setI((v) => (v + 1) % profile.roles.length), 2800);
-    return () => clearInterval(t);
-  }, []);
+    const interval = setInterval(() => setI((v) => (v + 1) % profile.roles.length), 2800);
+    return () => clearInterval(interval);
+  }, [profile.roles.length]);
 
-  // Differer le canvas apres le premier paint (LCP / interactivite mobile)
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) return;
@@ -62,7 +63,7 @@ export default function Hero() {
             <span className="absolute hidden h-full w-full animate-ping rounded-full bg-primary opacity-70 md:inline-flex" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
-          Disponible pour de nouveaux projets
+          {t.hero.available}
         </motion.div>
 
         <motion.p
@@ -71,7 +72,7 @@ export default function Hero() {
           transition={{ duration: 0.35, delay: 0.03 }}
           className="font-mono text-sm text-primary"
         >
-          Bonjour, je suis
+          {t.hero.greeting}
         </motion.p>
 
         <motion.h1
@@ -118,7 +119,7 @@ export default function Hero() {
             href="#projets"
             className="group flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-base transition hover:bg-primary/90 hover:shadow-glow"
           >
-            Voir mes projets
+            {t.hero.cta}
             <ArrowRight size={16} className="transition group-hover:translate-x-1" />
           </a>
           <a
@@ -126,13 +127,13 @@ export default function Hero() {
             download
             className="glass flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
           >
-            <Download size={16} /> Télécharger mon CV
+            <Download size={16} /> {t.hero.downloadCv}
           </a>
           <a
             href="#contact"
             className="px-3 py-3 text-sm font-semibold text-muted transition hover:text-white"
           >
-            Me contacter
+            {t.hero.contact}
           </a>
         </motion.div>
 
@@ -146,7 +147,7 @@ export default function Hero() {
             <MapPin size={13} className="text-primary" /> {profile.location}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Sparkles size={13} className="text-primary" /> Master ESP Dakar · Licence Maths UCAD
+            <Sparkles size={13} className="text-primary" /> {t.hero.degree}
           </span>
         </motion.div>
       </div>

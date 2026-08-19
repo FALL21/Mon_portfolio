@@ -1,19 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { services } from "@/data/portfolio";
+import { usePortfolio, useUI } from "@/context/LocaleContext";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 
 export default function Services() {
+  const { services } = usePortfolio();
+  const t = useUI();
+
   return (
     <section id="services" className="section-pad">
       <div className="container-x">
         <SectionHeading
-          index="04"
-          eyebrow="Services"
-          title="Ce que je peux construire pour vous"
-          description="De l'idée au déploiement : je prends en charge la chaîne complète."
+          index={t.services.index}
+          eyebrow={t.services.eyebrow}
+          title={t.services.title}
         />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -3,18 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Download, Menu, X } from "lucide-react";
-import { profile } from "@/data/portfolio";
-
-const links = [
-  { href: "#apropos", label: "À propos" },
-  { href: "#parcours", label: "Parcours" },
-  { href: "#competences", label: "Compétences" },
-  { href: "#projets", label: "Projets" },
-  { href: "#experience", label: "Expérience" },
-  { href: "#contact", label: "Contact" },
-];
+import { usePortfolio, useLocale, useUI } from "@/context/LocaleContext";
 
 export default function Navbar() {
+  const { profile } = usePortfolio();
+  const { locale, toggle } = useLocale();
+  const t = useUI();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -53,7 +47,7 @@ export default function Navbar() {
         </a>
 
         <ul className="hidden items-center gap-1 md:flex">
-          {links.map((l) => (
+          {t.nav.links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
@@ -66,6 +60,15 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={toggle}
+            aria-label="Toggle language"
+            className="flex items-center gap-0.5 rounded-lg px-2 py-1.5 text-xs font-semibold ring-1 ring-white/10 transition hover:bg-white/5"
+          >
+            <span className={locale === "fr" ? "text-primary" : "text-muted"}>FR</span>
+            <span className="text-muted/50 mx-0.5">|</span>
+            <span className={locale === "en" ? "text-primary" : "text-muted"}>EN</span>
+          </button>
           <a
             href={profile.cvPath}
             download
@@ -87,7 +90,7 @@ export default function Navbar() {
       {open && (
         <div className="container-x mt-2 md:hidden">
           <ul className="glass-strong flex flex-col gap-1 rounded-2xl p-3">
-            {links.map((l) => (
+            {t.nav.links.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}
@@ -105,7 +108,7 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="mt-1 flex items-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-base"
               >
-                <Download size={16} /> Télécharger le CV
+                <Download size={16} /> {t.nav.downloadCv}
               </a>
             </li>
           </ul>
